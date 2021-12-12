@@ -22,15 +22,19 @@ router.get('/:id', (req, res) => {
     include: [
       {
         model: Post,
-        attributes: ['id', 'title', 'post_text', 'created_at']
+        attributes: ['id', 'title', 'post_url', 'created_at']
       },
       {
         model: Comment,
         attributes: ['id', 'comment_text', 'created_at'],
         include: {
           model: Post,
-          attributes: ['title', 'post_id']
+          attributes: ['title']
         }
+      },
+      {
+        model: Post,
+        attributes: ['title']
       }
     ]
   })
@@ -70,7 +74,7 @@ router.post('/', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-
+  // expects {email: 'lernantino@gmail.com', password: 'password1234'}
   User.findOne({
     where: {
       email: req.body.email

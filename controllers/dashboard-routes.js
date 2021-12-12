@@ -5,13 +5,15 @@ const withAuth = require('../utils/auth');
 
 // get all posts for dashboard
 router.get('/', withAuth, (req, res) => {
+  console.log(req.session);
+  console.log('======================');
   Post.findAll({
     where: {
       user_id: req.session.user_id
     },
     attributes: [
       'id',
-      'post_text',
+      'content',
       'title',
       'created_at'
     ],
@@ -32,7 +34,7 @@ router.get('/', withAuth, (req, res) => {
   })
     .then(dbPostData => {
       const posts = dbPostData.map(post => post.get({ plain: true }));
-      res.render('dashboard', { posts, loggedIn: true, username: req.session.username });
+      res.render('dashboard', { posts, loggedIn: true });
     })
     .catch(err => {
       console.log(err);
@@ -44,7 +46,7 @@ router.get('/edit/:id', withAuth, (req, res) => {
   Post.findByPk(req.params.id, {
     attributes: [
       'id',
-      'post_text',
+      'content',
       'title',
       'created_at'
     ],
@@ -69,8 +71,7 @@ router.get('/edit/:id', withAuth, (req, res) => {
         
         res.render('edit-post', {
           post,
-          loggedIn: true,
-          username: req.session.username
+          loggedIn: true
         });
       } else {
         res.status(404).end();

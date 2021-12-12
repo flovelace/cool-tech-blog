@@ -4,13 +4,15 @@ const { Post, User, Comment } = require('../../models');
 const withAuth = require('../../utils/auth');
 
 // get all users
-router.get('/', withAuth, (req, res) => {
+router.get('/', (req, res) => {
+  console.log('======================');
   Post.findAll({
     attributes: [
       'id',
-      'post_text',
       'title',
-      'created_at'],
+      'content',
+      'created_at'
+    ],
     include: [
       {
         model: Comment,
@@ -32,18 +34,18 @@ router.get('/', withAuth, (req, res) => {
       res.status(500).json(err);
     });
 });
-// get post by id
-router.get('/:id', withAuth, (req, res) => {
+
+router.get('/:id', (req, res) => {
   Post.findOne({
     where: {
       id: req.params.id
     },
     attributes: [
       'id',
-      'post_text',
       'title',
-      'created_at',
-      ],
+      'content',
+      'created_at'
+    ],
     include: [
       {
         model: Comment,
@@ -76,7 +78,7 @@ router.post('/', withAuth, (req, res) => {
 
   Post.create({
     title: req.body.title,
-    post_text: req.body.post_text,
+    content: req.body.content,
     user_id: req.session.user_id
   })
     .then(dbPostData => res.json(dbPostData))
@@ -85,12 +87,14 @@ router.post('/', withAuth, (req, res) => {
       res.status(500).json(err);
     });
 });
-// edit post
+
 router.put('/:id', withAuth, (req, res) => {
   Post.update(
     {
-      title: req.body.title,
-      post_text: req.body.post_text
+      title: req.body.title
+    },
+    {
+      content: req.body.content
     },
     {
       where: {
@@ -110,7 +114,7 @@ router.put('/:id', withAuth, (req, res) => {
       res.status(500).json(err);
     });
 });
-// delete post
+
 router.delete('/:id', withAuth, (req, res) => {
   console.log('id', req.params.id);
   Post.destroy({
