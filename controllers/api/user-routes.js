@@ -1,5 +1,7 @@
 const router = require('express').Router();
+const withAuth = require('../../utils/auth')
 const { User, Post, Comment } = require('../../models');
+const withAuth = require('../../utils/auth');
 
 // get all users
 router.get('/', (req, res) => {
@@ -13,30 +15,19 @@ router.get('/', (req, res) => {
     });
 });
 
+// create route to get one user by id
 router.get('/:id', (req, res) => {
   User.findOne({
     attributes: { exclude: ['password'] },
-    where: {
-      id: req.params.id
-    },
     include: [
       {
         model: Post,
-        attributes: ['id', 'title', 'post_url', 'created_at']
+        attributes: ['id', 'title', 'text', 'created_at']
       },
       {
         model: Comment,
-        attributes: ['id', 'comment_text', 'created_at'],
-        include: {
-          model: Post,
-          attributes: ['title']
-        }
+        attributes: ['id', 'comment_text', 'created_at']
       },
-      {
-        model: Post,
-        attributes: ['title']
-      }
-    ]
   })
     .then(dbUserData => {
       if (!dbUserData) {

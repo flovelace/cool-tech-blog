@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const res = require('express/lib/response');
 const sequelize = require('../config/connection');
 const { Post, User, Comment } = require('../models');
 
@@ -12,6 +13,7 @@ router.get('/', (req, res) => {
       'title',
       'created_at'
     ],
+    order: [['created_at', 'DESC']],
     include: [
       {
         model: Comment,
@@ -41,7 +43,16 @@ router.get('/', (req, res) => {
     });
 });
 
-// get single post
+// create the login route
+router.get('/login', (req, res) => {
+  if (req.session.loggedIn) {
+    res.redirect('/');
+    return;
+  }
+  res.render('login');
+});
+
+// create the single post route
 router.get('/post/:id', (req, res) => {
   Post.findOne({
     where: {
@@ -49,10 +60,11 @@ router.get('/post/:id', (req, res) => {
     },
     attributes: [
       'id',
-      'content',
       'title',
-      'created_at'
+      'text',
+      'created_at',
     ],
+    order: [['created_at', 'DESC']],
     include: [
       {
         model: Comment,
@@ -68,32 +80,18 @@ router.get('/post/:id', (req, res) => {
       }
     ]
   })
-    .then(dbPostData => {
-      if (!dbPostData) {
-        res.status(404).json({ message: 'No post found with this id' });
-        return;
-      }
+  .then(dbPostData => {
+    const post = dbPostData.get({ plain: true });
 
-      const post = dbPostData.get({ plain: true });
-
-      res.render('single-post', {
-        post,
-        loggedIn: req.session.loggedIn
-      });
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json(err);
+    res.render('single=post', {
+      post,
+      loggedIn: req.session.loggedIn
     });
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+  });
 });
 
-router.get('/login', (req, res) => {
-  if (req.session.loggedIn) {
-    res.redirect('/');
-    return;
-  }
-
-  res.render('login');
-});
-
-module.exports = router;
+module.exporsts = router;
