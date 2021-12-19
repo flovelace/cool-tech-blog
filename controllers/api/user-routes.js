@@ -26,8 +26,16 @@ router.get('/:id', (req, res) => {
       },
       {
         model: Comment,
-        attributes: ['id', 'comment_text', 'created_at']
-      },
+        attributes: ['id', 'comment_text', 'created_at'],
+        include: {
+          model: Post,
+          attributes: ['title']
+        }
+      }
+    ],
+    where: {
+      id: req.params.id
+    }
   })
     .then(dbUserData => {
       if (!dbUserData) {
@@ -42,6 +50,7 @@ router.get('/:id', (req, res) => {
     });
 });
 
+// create a new user
 router.post('/', (req, res) => {
 
   User.create({
@@ -63,9 +72,9 @@ router.post('/', (req, res) => {
       res.status(500).json(err);
     });
 });
-
+// the login route
 router.post('/login', (req, res) => {
-  // expects {email: 'lernantino@gmail.com', password: 'password1234'}
+
   User.findOne({
     where: {
       email: req.body.email
@@ -92,7 +101,7 @@ router.post('/login', (req, res) => {
     });
   });
 });
-
+// logout and destroy session
 router.post('/logout', (req, res) => {
   if (req.session.loggedIn) {
     req.session.destroy(() => {
@@ -103,8 +112,8 @@ router.post('/logout', (req, res) => {
     res.status(404).end();
   }
 });
-
-router.put('/:id', (req, res) => {
+// update the user's username
+router.put('/:id', withAuth, (req, res) => {
 
   User.update(req.body, {
     individualHooks: true,
@@ -125,7 +134,8 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
+// delete user by id
+router.delete('/:id', withAuth, (req, res) => {
   User.destroy({
     where: {
       id: req.params.id
