@@ -1,12 +1,19 @@
 // format the date for the application using handlebars
-module.exports = {
-    format_date: date => {
-        return `${new Date(date).getMonth() + 1}/${new Date(date).getDate()}/${new Date(date).getFullYear}`;
-    }, //handlebars to make single words plural easier
-    format_plural: (word, amount) => {
-        if (amount !== 1) {
-            return `${word}s`
-        }
-        return word;
-    }
+const format_date = (date) => {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
+
+    const formatMonths = months[date.getMonth()];
+
+    return `${date.getDate()} ${formatMonths} ${date.getFullYear()}`
 };
+
+// format the plural so they are easier to deal with
+const format_plural = (string, num) => {
+    if (num === 1) {
+        return string;
+    } else {
+        return `${string}s`;
+    };
+};
+
+module.exports = { format_date, format_plural };
