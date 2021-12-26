@@ -1,12 +1,14 @@
 {{> post-info post }}
+
 {{#if loggedIn}}
-<form class="comment-form">
+<form class="comment-form p-1">
     <div>
-        <textarea name="comment-body"></textarea>
+        <label for="comment-body" class="d-none">Add comment:</label>
+        <textarea name="comment-body" id="comment-body"></textarea>
     </div>
 
     <div>
-        <button type="submit">add comment</button>
+        <button type="submit" class="btn">add comment</button>
     </div>
 </form>
 {{/if}}
@@ -14,5 +16,5 @@
 {{> comments post.comments}}
 
 {{#if loggedIn}}
-<script src="/javascript/comment.js"></script>
+<script src="/javascript/add-comment.js"></script>
 {{/if}}
