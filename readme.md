@@ -1,4 +1,4 @@
-# Cool Teach Blog
+# Cool Tech Blog
 ## Purpose
 A tech blog that allows users to sign up, login, and logout. Users can write posts about their tech thoughts, and comment on the tech thoughts of other users.
 
